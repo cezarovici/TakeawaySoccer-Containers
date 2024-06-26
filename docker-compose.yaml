@@ -1,0 +1,37 @@
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysqldb
+    environment:
+      MYSQL_USER: hbstudent
+      MYSQL_DATABASE: fotball-db
+      MYSQL_ROOT_PASSWORD: hbstudent
+      MYSQL_PASSWORD: hbstudent
+    networks:
+      - springboot-mysql-net
+    ports:
+      - "3306:3306"
+  springboot:
+    build:
+      context: REST-API--Football-App
+      dockerfile: Dockerfile
+    container_name: springboot-container
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    networks:
+      - springboot-mysql-net
+  angular:
+    build:
+      context: FotballApp-Angular
+      dockerfile: Dockerfile
+    container_name: angular-container
+    ports:
+      - "4200:4200"
+    networks:
+      - springboot-mysql-net
+
+networks:
+  springboot-mysql-net:
+    driver: bridge
